@@ -54,7 +54,7 @@ def check_rate_limit():
 
 def save_issues_to_csv(issues, output_file):
     with open(output_file, 'a', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Repository', 'Issue Label', 'Issue ID', 'Issue Title', 'Issue Body', 'State', 'Created At', 'Updated At']
+        fieldnames = ['Repository', 'Issue Label', 'Issue ID', 'Issue Title', 'Issue Body', 'State', 'Created At', 'Updated At', 'Author']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         # Write header only if file is empty
@@ -70,7 +70,8 @@ def save_issues_to_csv(issues, output_file):
                              'Issue Body': issue['body'],
                              'State': issue['state'],
                              'Created At': issue['created_at'],
-                             'Updated At': issue['updated_at']})
+                             'Updated At': issue['updated_at'],
+                             'Author': issue['user']['login']})
 
 # repo urls
 if __name__ == "__main__":
@@ -78,15 +79,15 @@ if __name__ == "__main__":
         "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
         "https://api.github.com/repos/Dexaran/ERC223-token-standard",
         "https://api.github.com/repos/gr3yc4t/ERC20-Staking-Machine",
-       # "https://api.github.com/repos/1x-eng/Decentralized_eCom",
-       # "https://api.github.com/repos/lidofinance/core",
-       # "https://api.github.com/repos/aave/gho-core",
-       # "https://api.github.com/repos/jklepatch/eattheblocks",
-       # "https://api.github.com/repos/compound-finance/compound-protocol",
-       # "https://api.github.com/repos/aragon/aragonOS",
-       # "https://api.github.com/repos/ProjectOpenSea/seaport" 
+        "https://api.github.com/repos/1x-eng/Decentralized_eCom",
+        "https://api.github.com/repos/lidofinance/core",
+        "https://api.github.com/repos/aave/gho-core",
+        "https://api.github.com/repos/jklepatch/eattheblocks",
+        "https://api.github.com/repos/compound-finance/compound-protocol",
+        "https://api.github.com/repos/aragon/aragonOS",
+        "https://api.github.com/repos/ProjectOpenSea/seaport" 
     ]
-    output_file = "github_issues_3.csv"
+    output_file = "github_issues_4.csv"
 
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues

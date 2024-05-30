@@ -3,13 +3,12 @@ import requests
 import time
 from requests.adapters import HTTPAdapter
 
-
 GITHUB_TOKEN = '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'
 
-session = requests.Session() #create session to make requests
+session = requests.Session()  # Create session to make requests
 
 def fetch_issues(repo_url):
-    issues = [] #where issues will be stored
+    issues = []  # Where issues will be stored
     page = 1
     while True:
         issues_url = f"{repo_url}/issues"
@@ -38,7 +37,7 @@ def fetch_issues(repo_url):
     return issues  # Return the list of issues
 
 def fetch_comments(repo_url, issue_number):
-    comments = [] # where comments are stored
+    comments = []  # Where comments are stored
     page = 1
     while True:
         comments_url = f"{repo_url}/issues/{issue_number}/comments"
@@ -84,7 +83,7 @@ def check_rate_limit():
     
 def save_comments_to_csv(repo_name, issue_number, comments, output_file):
     with open(output_file, 'a', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Repository', 'Issue ID', 'Comment Author', 'Comment Body']
+        fieldnames = ['Repository', 'Issue ID', 'Comment Author', 'Comment Body', 'Comment Date']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         # Write header only if file is empty
@@ -95,9 +94,10 @@ def save_comments_to_csv(repo_name, issue_number, comments, output_file):
             writer.writerow({'Repository': repo_name,
                              'Issue ID': issue_number,
                              'Comment Author': comment['user']['login'],
-                             'Comment Body': comment['body']})
+                             'Comment Body': comment['body'],
+                             'Comment Date': comment['created_at']})
 
-#  urls for github repos
+# URLs for GitHub repos
 if __name__ == "__main__":
     github_repo_urls = [
         "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
@@ -109,9 +109,9 @@ if __name__ == "__main__":
         "https://api.github.com/repos/jklepatch/eattheblocks",
         "https://api.github.com/repos/compound-finance/compound-protocol",
         "https://api.github.com/repos/aragon/aragonOS",
-        "https://api.github.com/repos/ProjectOpenSea/seaport" 
+        "https://api.github.com/repos/ProjectOpenSea/seaport"
     ]
-    output_file = "github_issue_comments_3.csv"
+    output_file = "github_issue_comments_4.csv"
 
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
