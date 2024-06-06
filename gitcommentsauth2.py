@@ -3,7 +3,7 @@ import requests
 import time
 
 
-GITHUB_TOKEN = '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'
+GITHUB_TOKEN = #insert github token here
 
 session = requests.Session()  # Create session to make requests
 
