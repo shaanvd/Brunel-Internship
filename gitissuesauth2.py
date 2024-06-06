@@ -2,7 +2,6 @@ import csv
 import requests
 import time
 
-
 GITHUB_TOKEN = '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'
 
 session = requests.Session()
@@ -22,7 +21,7 @@ def fetch_issues(repo_url):
             if not page_issues:
                 break  
             issues.extend(page_issues)
-            page += 1  # Increment page number for next request
+            page += 1  
         except requests.exceptions.HTTPError as http_err:
             print(f"HTTP error occurred: {http_err}")
             break
@@ -54,7 +53,7 @@ def check_rate_limit():
 
 def save_issues_to_csv(issues, output_file):
     with open(output_file, 'a', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Repository', 'Issue Label', 'Issue ID', 'Issue Title', 'Issue Body', 'State', 'Created At', 'Updated At', 'Author']
+        fieldnames = ['Repository', 'Issue Label', 'Issue ID', 'Issue Title', 'Issue Body', 'State', 'Created At', 'Updated At', 'Closed At', 'Author']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         # Write header only if file is empty
@@ -63,6 +62,7 @@ def save_issues_to_csv(issues, output_file):
 
         for issue in issues:
             labels = ', '.join([label['name'] for label in issue['labels']])
+            closed_at = issue['closed_at'] if 'closed_at' in issue and issue['closed_at'] else 'N/A'
             writer.writerow({'Repository': issue['repository_url'].split('/')[-1],
                              'Issue Label': labels,
                              'Issue ID': issue['number'],
@@ -71,6 +71,7 @@ def save_issues_to_csv(issues, output_file):
                              'State': issue['state'],
                              'Created At': issue['created_at'],
                              'Updated At': issue['updated_at'],
+                             'Closed At': closed_at,
                              'Author': issue['user']['login']})
 
 # repo urls
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         "https://api.github.com/repos/aragon/aragonOS",
         "https://api.github.com/repos/ProjectOpenSea/seaport" 
     ]
-    output_file = "github_issues_4.csv"
+    output_file = "github_issues_5.csv"
 
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues

@@ -5,11 +5,11 @@ import time
 ACCESS_TOKEN = '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'
 
 github_repo_urls = [
-    "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
-    "https://api.github.com/repos/Dexaran/ERC223-token-standard",
-    "https://api.github.com/repos/gr3yc4t/ERC20-Staking-Machine",
-    "https://api.github.com/repos/1x-eng/Decentralized_eCom",
-    "https://api.github.com/repos/lidofinance/core",
+   # "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
+   # "https://api.github.com/repos/Dexaran/ERC223-token-standard",
+   # "https://api.github.com/repos/gr3yc4t/ERC20-Staking-Machine",
+   # "https://api.github.com/repos/1x-eng/Decentralized_eCom",
+   # "https://api.github.com/repos/lidofinance/core",
     "https://api.github.com/repos/aave/gho-core",
     "https://api.github.com/repos/jklepatch/eattheblocks",
     "https://api.github.com/repos/compound-finance/compound-protocol",
@@ -19,7 +19,6 @@ github_repo_urls = [
 
 session = requests.Session()
 
-# Function to check rate limit
 def check_rate_limit():
     rate_limit_url = "https://api.github.com/rate_limit"
     headers = {'Authorization': f'token {ACCESS_TOKEN}'}
@@ -42,7 +41,6 @@ def check_rate_limit():
             print(f"Rate limit exceeded. Waiting for {wait_time:.0f} seconds.")
             time.sleep(wait_time)
 
-# Function to fetch commits
 def fetch_commits(repo_url):
     headers = {
         "Authorization": f"token {ACCESS_TOKEN}",
@@ -67,7 +65,6 @@ def fetch_commits(repo_url):
     
     return commits
 
-# Function to fetch detailed commit information
 def fetch_commit_details(repo_url, sha):
     headers = {
         "Authorization": f"token {ACCESS_TOKEN}",
@@ -83,15 +80,13 @@ def fetch_commit_details(repo_url, sha):
             time.sleep(5)
     raise Exception(f"Failed to fetch commit details after 3 attempts for {repo_url} with SHA {sha}")
 
-# Function to write commits to CSV
 def write_commits_to_csv(commits, repo_name, writer):
     for commit in commits:
         sha = commit["sha"]
-        author = commit["commit"]["author"]["name"]
+        author = commit["author"]["login"] if commit["author"] else "Unknown"
         date = commit["commit"]["author"]["date"]
         message = commit["commit"]["message"]
         
-        # Fetch commit information
         details = fetch_commit_details(repo_name, sha)
         additions = details["stats"]["additions"]
         deletions = details["stats"]["deletions"]
@@ -99,9 +94,8 @@ def write_commits_to_csv(commits, repo_name, writer):
         
         writer.writerow([repo_name, sha, author, date, message, additions, deletions, total_changes])
 
-# Main execution
 if __name__ == "__main__":
-    csv_filename = "github_commits.csv"
+    csv_filename = "github_commits_2.csv"
     with open(csv_filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])  # CSV header
@@ -109,8 +103,7 @@ if __name__ == "__main__":
         for repo_url in github_repo_urls:
             print(f"Fetching commits for repository: {repo_url}")
             repo_commits = fetch_commits(repo_url)
-            repo_name = repo_url.split("/")[-1]  # Extract repository name from URL
+            repo_name = repo_url.split("/")[-1]  
             print(f"Writing commits data for repository {repo_name} to {csv_filename}")
             write_commits_to_csv(repo_commits, repo_url, writer)
             print(f"Commits data with changes for repository {repo_name} has been written to {csv_filename}")
-            
