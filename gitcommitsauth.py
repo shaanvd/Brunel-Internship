@@ -2,19 +2,10 @@ import csv
 import requests
 import time
 
-ACCESS_TOKEN = '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'
+ACCESS_TOKEN = #insert github token here
 
 github_repo_urls = [
-   # "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
-   # "https://api.github.com/repos/Dexaran/ERC223-token-standard",
-   # "https://api.github.com/repos/gr3yc4t/ERC20-Staking-Machine",
-   # "https://api.github.com/repos/1x-eng/Decentralized_eCom",
-   # "https://api.github.com/repos/lidofinance/core",
-    "https://api.github.com/repos/aave/gho-core",
-    "https://api.github.com/repos/jklepatch/eattheblocks",
-    "https://api.github.com/repos/compound-finance/compound-protocol",
-    "https://api.github.com/repos/aragon/aragonOS",
-    "https://api.github.com/repos/ProjectOpenSea/seaport"
+   # insert api urls here
 ]
 
 session = requests.Session()
@@ -95,7 +86,7 @@ def write_commits_to_csv(commits, repo_name, writer):
         writer.writerow([repo_name, sha, author, date, message, additions, deletions, total_changes])
 
 if __name__ == "__main__":
-    csv_filename = "github_commits_2.csv"
+    csv_filename = "github_commits.csv"
     with open(csv_filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])  # CSV header
