@@ -102,7 +102,7 @@ if __name__ == "__main__":
     github_repo_urls = [
         #insert api urls here
     ]
-    output_file = "github_issue_comments_4.csv"
+    output_file = "github_issue_comments.csv"
 
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
