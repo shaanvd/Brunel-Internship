@@ -2,7 +2,7 @@ import csv
 import requests
 import time
 
-GITHUB_TOKEN = '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'
+GITHUB_TOKEN = #insert github token here
 
 session = requests.Session()
 
@@ -77,18 +77,9 @@ def save_issues_to_csv(issues, output_file):
 # repo urls
 if __name__ == "__main__":
     github_repo_urls = [
-        "https://api.github.com/repos/OpenZeppelin/openzeppelin-contracts",
-        "https://api.github.com/repos/Dexaran/ERC223-token-standard",
-        "https://api.github.com/repos/gr3yc4t/ERC20-Staking-Machine",
-        "https://api.github.com/repos/1x-eng/Decentralized_eCom",
-        "https://api.github.com/repos/lidofinance/core",
-        "https://api.github.com/repos/aave/gho-core",
-        "https://api.github.com/repos/jklepatch/eattheblocks",
-        "https://api.github.com/repos/compound-finance/compound-protocol",
-        "https://api.github.com/repos/aragon/aragonOS",
-        "https://api.github.com/repos/ProjectOpenSea/seaport" 
+       #insert api urls here
     ]
-    output_file = "github_issues_5.csv"
+    output_file = "github_issues.csv"
 
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
