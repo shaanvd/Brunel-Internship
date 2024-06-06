@@ -1,7 +1,7 @@
 import csv
 import requests
 import time
-from requests.adapters import HTTPAdapter
+
 
 GITHUB_TOKEN = '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'
 
