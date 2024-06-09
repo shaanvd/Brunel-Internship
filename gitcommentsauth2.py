@@ -2,11 +2,11 @@ import csv
 import requests
 import time
 
-GITHUB_TOKEN = #insert github token here
+GITHUB_TOKEN = #insert your github token here
 
-    github_repo_urls = [
-        #insert api urls here
-    ]
+github_repo_urls = [
+#insert github api urls here
+]
 
 session = requests.Session()  # Create session to make requests
 
