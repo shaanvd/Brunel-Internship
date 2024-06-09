@@ -1,4 +1,4 @@
-Github Data Extraction Tools
+----------------Github Data Extraction Tools----------------
 
 These are a collection of scripts designed to extract commit, issue and issue comment information from a set of chosen repositories, to a csv file, stored on your local machine. 
 
