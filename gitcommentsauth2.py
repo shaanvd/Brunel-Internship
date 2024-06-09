@@ -2,8 +2,11 @@ import csv
 import requests
 import time
 
-
 GITHUB_TOKEN = #insert github token here
+
+    github_repo_urls = [
+        #insert api urls here
+    ]
 
 session = requests.Session()  # Create session to make requests
 
@@ -97,13 +100,8 @@ def save_comments_to_csv(repo_name, issue_number, comments, output_file):
                              'Comment Body': comment['body'],
                              'Comment Date': comment['created_at']})
 
-# URLs for GitHub repos
 if __name__ == "__main__":
-    github_repo_urls = [
-        #insert api urls here
-    ]
-    output_file = "github_issue_comments.csv"
-
+    output_file = "github_issue_comments.csv" #change this to what you want your output file to be called
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
         repo_name = repo_url.split("/")[-1]  # Extract repository name from URL
