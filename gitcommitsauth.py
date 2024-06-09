@@ -5,7 +5,7 @@ import time
 GITHUB_TOKEN = #insert your github token here
 
 github_repo_urls = [
-   #insert github api urls here
+#insert github api urls here
 ]
 
 session = requests.Session()
