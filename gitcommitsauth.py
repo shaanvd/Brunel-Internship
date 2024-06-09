@@ -2,17 +2,17 @@ import csv
 import requests
 import time
 
-ACCESS_TOKEN = #insert github token here
+GITHUB_TOKEN = #insert your github token here
 
 github_repo_urls = [
-   # insert api urls here
+   #insert github api urls here
 ]
 
 session = requests.Session()
 
 def check_rate_limit():
     rate_limit_url = "https://api.github.com/rate_limit"
-    headers = {'Authorization': f'token {ACCESS_TOKEN}'}
+    headers = {'Authorization': f'token {GITHUB_TOKEN}'}
     
     response = session.get(rate_limit_url, headers=headers)
     if response.status_code != 200:
@@ -34,7 +34,7 @@ def check_rate_limit():
 
 def fetch_commits(repo_url):
     headers = {
-        "Authorization": f"token {ACCESS_TOKEN}",
+        "Authorization": f"token {GITHUB_TOKEN}",
     }
     commits = []
     page = 1
@@ -58,7 +58,7 @@ def fetch_commits(repo_url):
 
 def fetch_commit_details(repo_url, sha):
     headers = {
-        "Authorization": f"token {ACCESS_TOKEN}",
+        "Authorization": f"token {GITHUB_TOKEN}",
     }
     check_rate_limit()  # Check rate limit before making API call
     for _ in range(3):  # Retry up to 3 times
@@ -86,7 +86,7 @@ def write_commits_to_csv(commits, repo_name, writer):
         writer.writerow([repo_name, sha, author, date, message, additions, deletions, total_changes])
 
 if __name__ == "__main__":
-    csv_filename = "github_commits.csv"
+    csv_filename = "github_commits.csv" #change this to what you want your file to be called
     with open(csv_filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])  # CSV header
