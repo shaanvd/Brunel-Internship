@@ -2,11 +2,11 @@ import csv
 import requests
 import time
 
-GITHUB_TOKEN = #insert github token here
+GITHUB_TOKEN = #insert your github token here
 
 github_repo_urls = [
-       #insert api urls here
-    ]
+#insert github api urls here
+]
 
 session = requests.Session()
 
@@ -79,7 +79,7 @@ def save_issues_to_csv(issues, output_file):
                              'Author': issue['user']['login']})
 
 if __name__ == "__main__":
-    output_file = "github_issues.csv"
+    output_file = "github_issues.csv" #change this to what you want your file to be called
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
         repo_name = repo_url.split("/")[-1]  # Extract repository name from URL
