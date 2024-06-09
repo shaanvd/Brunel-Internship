@@ -4,6 +4,10 @@ import time
 
 GITHUB_TOKEN = #insert github token here
 
+github_repo_urls = [
+       #insert api urls here
+    ]
+
 session = requests.Session()
 
 def fetch_issues(repo_url):
@@ -74,13 +78,8 @@ def save_issues_to_csv(issues, output_file):
                              'Closed At': closed_at,
                              'Author': issue['user']['login']})
 
-# repo urls
 if __name__ == "__main__":
-    github_repo_urls = [
-       #insert api urls here
-    ]
     output_file = "github_issues.csv"
-
     for repo_url in github_repo_urls:
         check_rate_limit()  # Check rate limit before fetching issues
         repo_name = repo_url.split("/")[-1]  # Extract repository name from URL
