@@ -1,6 +1,6 @@
-----------------Github Data Extraction Tools----------------
+# Github Data Extraction Tools
 
-These are a collection of scripts designed to extract commit, issue and issue comment information from a set of chosen repositories, to a csv file, stored on your local machine. 
+#### These are a collection of scripts designed to extract commit, issue and issue comment information from a set of chosen repositories, to a csv file, stored on your local machine. 
 
 Before you begin:
 
@@ -38,5 +38,21 @@ Simply paste the URLs of the repositories you want to run the script with in 'gi
     ]  
 
 After the above steps have been completed, you are ready to run your script!
+
+### What script should I use?
+
+To extract commit information use gitcommitsauth.py. 
+
+To extract issue information use gitissuesauth.py
+
+To extract issue comments use gitcommentsauth.py
+
+### What does each script save?
+
+gitcommitsauth.py - (Repo Name, Commit ID, Commit Author, Commit Date, Commit Message, Commit Additions, Deletions and Total Changes are saved into a csv file)
+
+gitissuesauth2.py - (Repo Name, Issue Label, Issue ID, Issue Author, Issue Title, Issue Body, Issue State, Created At, Updated At and Closed At are saved into a csv file)
+
+gitcommentsauth2.py - (Repo Name, Issue ID, Comment Author, Comment Body and Comment Date are saved into a csv file)
 
 
