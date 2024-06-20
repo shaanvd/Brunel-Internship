@@ -1,19 +1,20 @@
 # Github Data Extraction Tools
 
-#### These are a collection of scripts designed to extract commit, issue and issue comment information from a set of chosen repositories, to a csv file, stored on your local machine. 
+### This is designed to extract commit, issue and issue comment data from a set of chosen repositories, to csv files, stored on your local machine. 
 
-Before you begin:
+### Before you begin:
 
-Install the python requests library by running the following line in your terminal:
+#### Save the main.py file onto your device.
+
+#### Install the python requests library by running the following line in your terminal:
 
     pip install requests
 
-(or if using python3)
+#### Install the python pyyaml library by running the following line in your terminal:
 
-    pip3 install requests
+    pip install pyyaml
 
-
-Generate a GitHub Token:
+#### Generate and paste a GitHub Token:
 
 1. Go into your GitHub settings
 2. Select Developer settings
@@ -24,35 +25,43 @@ Generate a GitHub Token:
 7. Select all relevant fields
 8. Press 'Generate token'
 9. Copy and save your token somewhere safe
+10. When complete, paste your token into the 'GITHUB_TOKEN' line of code. (line 13) 
 
-When complete, paste your token into the 'GITHUB_TOKEN' line of code. 
+#### GitHub API URLs are required to run this code. (https://api.github.com/repos/owner/reponame)
 
-GitHub API URLs are required to use these scripts. (https://api.github.com/repos/owner/reponame)
+#### Create a 'config.yaml' file in the directory of the project. Use this structure to list the repositories you want to fetch data from:
 
-Simply paste the URLs of the repositories you want to run the script with in 'github_repo_urls'. If you have multiple URLS paste as such:
+    repositories:
+      - https://api.github.com/repos/owner/reponame1
+      - https://api.github.com/repos/owner/reponame2
+      - https://api.github.com/repos/owner/reponame3
+        #add as many repositories as you like
 
-    github_repo_urls = [
-    'https://api.github.com/repos/owner/reponame1',
-    'https://api.github.com/repos/owner/reponame2',
-    # Add more repositories as needed
-    ]  
+#### After the above steps have been completed, you are ready to run your script!
 
-After the above steps have been completed, you are ready to run your script!
+### What data is saved?
 
-### What script should I use?
+Commits - (Repo Name, Commit ID, Commit Author, Commit Date, Commit Message, Commit Additions, Deletions and Total Changes are saved into a file called github_commits.csv)
 
-To extract commit information use gitcommitsauth.py. 
+Issues - (Repo Name, Issue Label, Issue ID, Issue Author, Issue Title, Issue Body, Issue State, Created At, Updated At and Closed At are saved into a file called github_issues.csv)
 
-To extract issue information use gitissuesauth.py
+Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment Date are saved into a file called github_comments.csv)
 
-To extract issue comments use gitcommentsauth.py
+### Script Overview
 
-### What does each script save?
+#### GitHubUtils:
+- Checks and handles Github API rate limits
 
-gitcommitsauth.py - (Repo Name, Commit ID, Commit Author, Commit Date, Commit Message, Commit Additions, Deletions and Total Changes are saved into a csv file)
+#### GitHubDataFetcher:
+- Fetches paignated data from the GitHub API
 
-gitissuesauth2.py - (Repo Name, Issue Label, Issue ID, Issue Author, Issue Title, Issue Body, Issue State, Created At, Updated At and Closed At are saved into a csv file)
+#### GitHubCommits:
+- Fetches commit data and writes it to a CSV file called github_commits.csv.
 
-gitcommentsauth2.py - (Repo Name, Issue ID, Comment Author, Comment Body and Comment Date are saved into a csv file)
+#### GitHubIssues:
+- Fetches issue data and writes it to a CSV file called github_issues.csv.
+
+#### GitHub Comments:
+- Fetches comment data for each issue and writes it to a CSV file called github_comments.csv
 
 
