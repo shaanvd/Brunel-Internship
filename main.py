@@ -4,18 +4,18 @@ import time
 import yaml
 from typing import List, Dict, Any
 
-# Load repository URLs from external YAML file
-def load_repo_urls_from_yaml(file_path: str) -> List[str]:
+# Load configuration from external YAML file
+def load_config_from_yaml(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         config = yaml.safe_load(file)
-        return config['repositories']
+        return config
 
-GITHUB_TOKEN = ' ' #INSERT GITHUB TOKEN HERE
-GITHUB_REPO_URLS = load_repo_urls_from_yaml('config.yaml')
+config = load_config_from_yaml('config.yaml')
+GITHUB_TOKEN = config['github_token']
+GITHUB_REPO_URLS = config['repositories']
 
 session = requests.Session()
 session.headers.update({'Authorization': f'token {GITHUB_TOKEN}'})
-
 
 class GitHubUtils:
     @staticmethod
@@ -32,7 +32,6 @@ class GitHubUtils:
             if wait_time > 0:
                 print(f"Rate limit exceeded. Waiting for {wait_time:.0f} seconds.")
                 time.sleep(wait_time)
-
 
 class GitHubDataFetcher:
     @staticmethod
@@ -53,7 +52,6 @@ class GitHubDataFetcher:
             page += 1
 
         return data
-
 
 class GitHubCommits:
     @staticmethod
@@ -90,7 +88,6 @@ class GitHubCommits:
 
             writer.writerow([repo_url.split('/')[-1], sha, author, date, message, additions, deletions, total_changes])
 
-
 class GitHubIssues:
     @staticmethod
     def fetch_issues(repo_url: str) -> List[Dict[str, Any]]:
@@ -122,7 +119,6 @@ class GitHubIssues:
                     'Author': issue['user']['login']
                 })
 
-
 class GitHubComments:
     @staticmethod
     def fetch_comments(repo_url: str, issue_number: int) -> List[Dict[str, Any]]:
@@ -146,11 +142,10 @@ class GitHubComments:
                     'Comment Date': comment['created_at']
                 })
 
-
 def main():
-    commits_output_file = "github_commits.csv" #NAME OF COMMITS FILE
-    issues_output_file = "github_issues.csv" #NAME OF ISSUES FILE
-    comments_output_file = "github_comments.csv" #NAME OF ISSUE COMMENTS FILE
+    commits_output_file = "github_commits.csv"
+    issues_output_file = "github_issues.csv"
+    comments_output_file = "github_comments.csv"
 
     with open(commits_output_file, mode='a', newline='') as commits_file:
         commits_writer = csv.writer(commits_file)
@@ -179,7 +174,6 @@ def main():
                 GitHubComments.save_comments_to_csv(repo_name, issue_number, comments, comments_output_file)
             else:
                 print(f"No comments found for issue {issue_number} in {repo_url}")
-
 
 if __name__ == "__main__":
     main()
