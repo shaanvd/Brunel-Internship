@@ -66,19 +66,21 @@ Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment 
 
 ### If you want to use each script separately you can do so as described below:
 
-To extract commit information use gitcommitsauth.py. 
+To extract commit information use gitcommits.py. 
 
-To extract issue information use gitissuesauth.py
+To extract issue information use gitissues.py
 
-To extract issue comments use gitcommentsauth.py
+To extract issue comments use gitcomments.py
 
-Simply paste the URLs of the repositories you want to run the script with in 'github_repo_urls'. If you have multiple URLS, paste as such:
+Simply paste the URLs of the repositories you want to run the script with inside 'github_repo_urls', as such:
 
     github_repo_urls = [
     'https://api.github.com/repos/owner/reponame1',
     'https://api.github.com/repos/owner/reponame2',
     # Add more repositories as needed
     ]  
+
+Paste in your github token the same way as above.
 
 
 
