@@ -64,4 +64,23 @@ Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment 
 #### GitHub Comments:
 - Fetches comment data for each issue and writes it to a CSV file called github_comments.csv
 
+### If you want to use each script separately you can do so as described below:
+
+To extract commit information use gitcommitsauth.py. 
+
+To extract issue information use gitissuesauth.py
+
+To extract issue comments use gitcommentsauth.py
+
+Simply paste the URLs of the repositories you want to run the script with in 'github_repo_urls'. If you have multiple URLS, paste as such:
+
+    github_repo_urls = [
+    'https://api.github.com/repos/owner/reponame1',
+    'https://api.github.com/repos/owner/reponame2',
+    # Add more repositories as needed
+    ]  
+
+
+
+
 
