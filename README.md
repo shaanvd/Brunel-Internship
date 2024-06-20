@@ -14,7 +14,7 @@
 
     pip install pyyaml
 
-#### Generate and paste a GitHub Token:
+#### Generate a GitHub Token:
 
 1. Go into your GitHub settings
 2. Select Developer settings
@@ -24,13 +24,13 @@
 6. Select 'classic'
 7. Select all relevant fields
 8. Press 'Generate token'
-9. Copy and save your token somewhere safe
-10. When complete, paste your token into the 'GITHUB_TOKEN' line of code. (line 13) 
+9. Copy and save your token somewhere safe as you will need it
 
 #### GitHub API URLs are required to run this code. (https://api.github.com/repos/owner/reponame)
 
-#### Create a 'config.yaml' file in the directory of the project. Use this structure to list the repositories you want to fetch data from:
+#### Create a 'config.yaml' file in the directory of the project. Use this structure to list your Github Token and the repositories you want to fetch data from:
 
+    github_token: paste_your_token_here
     repositories:
       - https://api.github.com/repos/owner/reponame1
       - https://api.github.com/repos/owner/reponame2
@@ -64,7 +64,7 @@ Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment 
 #### GitHub Comments:
 - Fetches comment data for each issue and writes it to a CSV file called github_comments.csv
 
-### If you want to use each script separately you can do so as described below:
+#### If you want to use each script separately you can do so as described below:
 
 To extract commit information use gitcommits.py. 
 
@@ -80,7 +80,7 @@ Simply paste the URLs of the repositories you want to run the script with inside
     # Add more repositories as needed
     ]  
 
-Paste in your github token the same way as above.
+Paste your github token into the GITHUB_TOKEN line of code. After this is done you can run the code!
 
 
 
