@@ -143,37 +143,50 @@ class GitHubComments:
                 })
 
 def main():
+    print("Choose an option:")
+    print("1: Fetch commits")
+    print("2: Fetch issues")
+    print("3: Fetch comments")
+    print("4: Fetch all data")
+
+    choice = input("Enter your choice (1, 2, 3, or 4): ")
+
     commits_output_file = "github_commits.csv"
     issues_output_file = "github_issues.csv"
     comments_output_file = "github_comments.csv"
 
-    with open(commits_output_file, mode='a', newline='') as commits_file:
-        commits_writer = csv.writer(commits_file)
-        if commits_file.tell() == 0:
-            commits_writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])
+    if choice == '1' or choice == '4':
+        with open(commits_output_file, mode='a', newline='') as commits_file:
+            commits_writer = csv.writer(commits_file)
+            if commits_file.tell() == 0:
+                commits_writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])
 
+            for repo_url in GITHUB_REPO_URLS:
+                repo_name = repo_url.split("/")[-1]
+                print(f"Fetching commits for repository: {repo_name}")
+                repo_commits = GitHubCommits.fetch_commits(repo_url)
+                GitHubCommits.write_commits_to_csv(repo_commits, repo_url, commits_writer)
+                print(f"Commits data with changes for repository {repo_name} has been written to {commits_output_file}")
+
+    if choice == '2' or choice == '4' or choice == '3':
         for repo_url in GITHUB_REPO_URLS:
             repo_name = repo_url.split("/")[-1]
-            print(f"Fetching commits for repository: {repo_name}")
-            repo_commits = GitHubCommits.fetch_commits(repo_url)
-            GitHubCommits.write_commits_to_csv(repo_commits, repo_url, commits_writer)
-            print(f"Commits data with changes for repository {repo_name} has been written to {commits_output_file}")
+            if choice == '2' or choice == '4':
+                issues = GitHubIssues.fetch_issues(repo_url)
+                if issues:
+                    GitHubIssues.save_issues_to_csv(issues, issues_output_file)
+                else:
+                    print(f"No issues found for {repo_url}")
 
-    for repo_url in GITHUB_REPO_URLS:
-        repo_name = repo_url.split("/")[-1]
-        issues = GitHubIssues.fetch_issues(repo_url)
-        if issues:
-            GitHubIssues.save_issues_to_csv(issues, issues_output_file)
-        else:
-            print(f"No issues found for {repo_url}")
-
-        for issue in issues:
-            issue_number = issue['number']
-            comments = GitHubComments.fetch_comments(repo_url, issue_number)
-            if comments:
-                GitHubComments.save_comments_to_csv(repo_name, issue_number, comments, comments_output_file)
-            else:
-                print(f"No comments found for issue {issue_number} in {repo_url}")
+            if choice == '3' or choice == '4':
+                issues = GitHubIssues.fetch_issues(repo_url)
+                for issue in issues:
+                    issue_number = issue['number']
+                    comments = GitHubComments.fetch_comments(repo_url, issue_number)
+                    if comments:
+                        GitHubComments.save_comments_to_csv(repo_name, issue_number, comments, comments_output_file)
+                    else:
+                        print(f"No comments found for issue {issue_number} in {repo_url}")
 
 if __name__ == "__main__":
     main()
