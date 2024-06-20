@@ -2,6 +2,14 @@
 
 ### This is designed to extract commit, issue and issue comment data from a set of chosen repositories, to csv files, stored on your local machine. 
 
+### What data is saved?
+
+Commits - (Repo Name, Commit ID, Commit Author, Commit Date, Commit Message, Commit Additions, Deletions and Total Changes are saved into a file called github_commits.csv)
+
+Issues - (Repo Name, Issue Label, Issue ID, Issue Author, Issue Title, Issue Body, Issue State, Created At, Updated At and Closed At are saved into a file called github_issues.csv)
+
+Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment Date are saved into a file called github_comments.csv)
+
 ### Before you begin:
 
 #### Save the main.py file onto your device.
@@ -43,10 +51,4 @@
 
 #### '1' for commits, '2' for issues, '3' for comments, '4' for all.
 
-### What data is saved?
 
-Commits - (Repo Name, Commit ID, Commit Author, Commit Date, Commit Message, Commit Additions, Deletions and Total Changes are saved into a file called github_commits.csv)
-
-Issues - (Repo Name, Issue Label, Issue ID, Issue Author, Issue Title, Issue Body, Issue State, Created At, Updated At and Closed At are saved into a file called github_issues.csv)
-
-Issue Comments - (Repo Name, Issue ID, Comment Author, Comment Body and Comment Date are saved into a file called github_comments.csv)
