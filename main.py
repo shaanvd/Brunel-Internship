@@ -184,10 +184,13 @@ def main():
         issues = GitHubIssues(fetcher, GITHUB_REPO_URLS)
         for repo_url in GITHUB_REPO_URLS:
             repo_name = repo_url.split("/")[-1]
-            if choice == '2' or choice == '4':
+            repo_issues = []
+
+            if choice == '2' or choice == '4' or choice == '3':
                 repo_issues = issues.fetch_issues(repo_url)
                 if repo_issues:
-                    issues.save_issues_to_csv(repo_issues, issues_output_file)
+                    if choice == '2' or choice == '4':
+                        issues.save_issues_to_csv(repo_issues, issues_output_file)
                 else:
                     print(f"No issues found for {repo_url}")
 
@@ -203,3 +206,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
