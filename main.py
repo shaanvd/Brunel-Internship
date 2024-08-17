@@ -4,6 +4,7 @@ import time
 import yaml
 from typing import List, Dict, Any
 
+# Load configuration from external YAML file
 def load_config_from_yaml(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         config = yaml.safe_load(file)
@@ -19,26 +20,18 @@ class GitHubUtils:
         self.session.headers.update({'Authorization': f'token {token}'})
 
     def check_rate_limit(self):
-        for attempt in range(3):
-            try:
-                response = self.session.get("https://api.github.com/rate_limit")
-                response.raise_for_status()
-                rate_limit_info = response.json()
-                remaining_requests = rate_limit_info['rate']['remaining']
-                reset_time = rate_limit_info['rate']['reset']
+        response = self.session.get("https://api.github.com/rate_limit")
+        response.raise_for_status()
+        rate_limit_info = response.json()
 
-                if remaining_requests == 0:
-                    wait_time = reset_time - time.time()
-                    if wait_time > 0:
-                        print(f"Rate limit exceeded. Waiting for {wait_time:.0f} seconds.")
-                        time.sleep(wait_time)
-                return
-            except requests.exceptions.HTTPError as e:
-                if response.status_code == 503:
-                    print(f"Attempt {attempt + 1}: Service unavailable. Retrying...")
-                    time.sleep(2 ** attempt)
-                else:
-                    raise
+        remaining_requests = rate_limit_info['rate']['remaining']
+        reset_time = rate_limit_info['rate']['reset']
+
+        if remaining_requests == 0:
+            wait_time = reset_time - time.time()
+            if wait_time > 0:
+                print(f"Rate limit exceeded. Waiting for {wait_time:.0f} seconds.")
+                time.sleep(wait_time)
 
 class GitHubDataFetcher:
     def __init__(self, utils: GitHubUtils):
@@ -52,45 +45,15 @@ class GitHubDataFetcher:
 
         while True:
             self.utils.check_rate_limit()
-            for attempt in range(5):
-                try:
-                    response = self.utils.session.get(url, params={**params, 'page': page, 'per_page': 100})
-                    if response.status_code == 403:
-                        print(f"Access forbidden for URL: {url}. Retrying...")
-                        time.sleep(2 ** attempt)
-                        continue
-                    response.raise_for_status()
-                    page_data = response.json()
-                    if not page_data:
-                        break
-                    data.extend(page_data)
-                    page += 1
-                    break
-                except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
-                    print(f"Attempt {attempt + 1}: Error fetching data from {url}. Error: {e}. Retrying...")
-                    time.sleep(2 ** attempt)
-            else:
-                print(f"Failed to fetch data from {url} after multiple attempts.")
+            response = self.utils.session.get(url, params={**params, 'page': page, 'per_page': 100})
+            response.raise_for_status()
+            page_data = response.json()
+            if not page_data:
                 break
+            data.extend(page_data)
+            page += 1
 
         return data
-
-class GitHubOperationFactory:
-    def __init__(self, fetcher: GitHubDataFetcher, repo_urls: List[str]):
-        self.fetcher = fetcher
-        self.repo_urls = repo_urls
-
-    def create_operation(self, choice: str):
-        if choice == '1':
-            return GitHubCommits(self.fetcher, self.repo_urls)
-        elif choice == '2':
-            return GitHubIssues(self.fetcher, self.repo_urls)
-        elif choice == '3':
-            return GitHubComments(self.fetcher, self.repo_urls)
-        elif choice == '4':
-            return GitHubAllData(self.fetcher, self.repo_urls)
-        else:
-            raise ValueError("Invalid choice")
 
 class GitHubCommits:
     def __init__(self, fetcher: GitHubDataFetcher, repo_urls: List[str]):
@@ -114,7 +77,7 @@ class GitHubCommits:
 
         raise Exception(f"Failed to fetch commit details after 3 attempts for {repo_url} with SHA {sha}")
 
-    def save_commits_to_csv(self, commits: List[Dict[str, Any]], repo_url: str, writer: csv.writer):
+    def write_commits_to_csv(self, commits: List[Dict[str, Any]], repo_url: str, writer: csv.writer):
         for commit in commits:
             sha = commit["sha"]
             author = commit["author"]["login"] if commit["author"] else "Unknown"
@@ -127,20 +90,6 @@ class GitHubCommits:
             total_changes = additions + deletions
 
             writer.writerow([repo_url.split('/')[-1], sha, author, date, message, additions, deletions, total_changes])
-
-    def execute(self):
-        commits_output_file = "github_commits.csv"
-        with open(commits_output_file, mode='a', newline='') as commits_file:
-            commits_writer = csv.writer(commits_file)
-            if commits_file.tell() == 0:
-                commits_writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])
-
-            for repo_url in self.repo_urls:
-                repo_name = repo_url.split("/")[-1]
-                print(f"Fetching commits for repository: {repo_name}")
-                repo_commits = self.fetch_commits(repo_url)
-                self.save_commits_to_csv(repo_commits, repo_url, commits_writer)
-                print(f"Commits data with changes for repository {repo_name} has been written to {commits_output_file}")
 
 class GitHubIssues:
     def __init__(self, fetcher: GitHubDataFetcher, repo_urls: List[str]):
@@ -175,16 +124,6 @@ class GitHubIssues:
                     'Author': issue['user']['login']
                 })
 
-    def execute(self):
-        issues_output_file = "github_issues.csv"
-        for repo_url in self.repo_urls:
-            repo_name = repo_url.split("/")[-1]
-            repo_issues = self.fetch_issues(repo_url)
-            if repo_issues:
-                self.save_issues_to_csv(repo_issues, issues_output_file)
-            else:
-                print(f"No issues found for {repo_url}")
-
 class GitHubComments:
     def __init__(self, fetcher: GitHubDataFetcher, repo_urls: List[str]):
         self.fetcher = fetcher
@@ -210,48 +149,60 @@ class GitHubComments:
                     'Comment Date': comment['created_at']
                 })
 
-    def execute(self):
-        comments_output_file = "github_comments.csv"
-        for repo_url in self.repo_urls:
-            repo_name = repo_url.split("/")[-1]
-            issues_fetcher = GitHubIssues(self.fetcher, self.repo_urls)
-            repo_issues = issues_fetcher.fetch_issues(repo_url)
-            for issue in repo_issues:
-                issue_number = issue['number']
-                repo_comments = self.fetch_comments(repo_url, issue_number)
-                if repo_comments:
-                    self.save_comments_to_csv(repo_name, issue_number, repo_comments, comments_output_file)
-                else:
-                    print(f"No comments found for issue {issue_number} in {repo_url}")
-
-class GitHubAllData:
-    def __init__(self, fetcher: GitHubDataFetcher, repo_urls: List[str]):
-        self.commits = GitHubCommits(fetcher, repo_urls)
-        self.issues = GitHubIssues(fetcher, repo_urls)
-        self.comments = GitHubComments(fetcher, repo_urls)
-
-    def execute(self):
-        self.commits.execute()
-        self.issues.execute()
-        self.comments.execute()
-
 def main():
+    print("Choose an option:")
+    print("1: Fetch commits")
+    print("2: Fetch issues")
+    print("3: Fetch comments")
+    print("4: Fetch all data")
+
+    choice = input("Enter your choice (1, 2, 3, or 4): ")
+
+    # CAN CHANGE NAMES OF CSV FILES HERE
+    commits_output_file = "github_commits.csv"
+    issues_output_file = "github_issues.csv"
+    comments_output_file = "github_comments.csv"
+
     utils = GitHubUtils(GITHUB_TOKEN)
     fetcher = GitHubDataFetcher(utils)
-    factory = GitHubOperationFactory(fetcher, GITHUB_REPO_URLS)
 
-    print("Choose an option:")
-    print("1. Fetch and save commits")
-    print("2. Fetch and save issues")
-    print("3. Fetch and save comments")
-    print("4. Fetch and save all data (commits, issues, comments)")
+    if choice == '1' or choice == '4':
+        with open(commits_output_file, mode='a', newline='') as commits_file:
+            commits_writer = csv.writer(commits_file)
+            if commits_file.tell() == 0:
+                commits_writer.writerow(["Repository", "Commit ID", "Author", "Date", "Message", "Additions", "Deletions", "Total Changes"])
 
-    choice = input("Enter the number corresponding to your choice: ").strip()
-    try:
-        operation = factory.create_operation(choice)
-        operation.execute()
-    except ValueError as e:
-        print(e)
+            commits = GitHubCommits(fetcher, GITHUB_REPO_URLS)
+            for repo_url in GITHUB_REPO_URLS:
+                repo_name = repo_url.split("/")[-1]
+                print(f"Fetching commits for repository: {repo_name}")
+                repo_commits = commits.fetch_commits(repo_url)
+                commits.write_commits_to_csv(repo_commits, repo_url, commits_writer)
+                print(f"Commits data with changes for repository {repo_name} has been written to {commits_output_file}")
+
+    if choice == '2' or choice == '4' or choice == '3':
+        issues = GitHubIssues(fetcher, GITHUB_REPO_URLS)
+        for repo_url in GITHUB_REPO_URLS:
+            repo_name = repo_url.split("/")[-1]
+            repo_issues = []
+
+            if choice == '2' or choice == '4' or choice == '3':
+                repo_issues = issues.fetch_issues(repo_url)
+                if repo_issues:
+                    if choice == '2' or choice == '4':
+                        issues.save_issues_to_csv(repo_issues, issues_output_file)
+                else:
+                    print(f"No issues found for {repo_url}")
+
+            if choice == '3' or choice == '4':
+                comments = GitHubComments(fetcher, GITHUB_REPO_URLS)
+                for issue in repo_issues:
+                    issue_number = issue['number']
+                    repo_comments = comments.fetch_comments(repo_url, issue_number)
+                    if repo_comments:
+                        comments.save_comments_to_csv(repo_name, issue_number, repo_comments, comments_output_file)
+                    else:
+                        print(f"No comments found for issue {issue_number} in {repo_url}")
 
 if __name__ == "__main__":
     main()
